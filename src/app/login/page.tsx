@@ -1,11 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import Button from "@/components/Button/Button";
 import Image from "next/image";
-import { useState } from "react";
-
+import { signIn } from "next-auth/react";
 // images
 import GoogleIcon from "../../assets/google-icon.svg";
+import { toast } from "react-hot-toast";
 
 interface LoginProps {}
 
@@ -13,7 +14,14 @@ const Login: React.FC<LoginProps> = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const loginWithGoogle = async () => {
-    // make api call here
+    setIsLoading(true);
+    try {
+      await signIn("google");
+    } catch (error) {
+      toast.error("Oops... Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -30,7 +38,14 @@ const Login: React.FC<LoginProps> = () => {
             className="max-w-sm mx-auto w-full"
             onClick={loginWithGoogle}
           >
-            <Image src={GoogleIcon} width={20} height={20} alt="Google Icon" />
+            {!isLoading && (
+              <Image
+                src={GoogleIcon}
+                width={20}
+                height={20}
+                alt="Google Icon"
+              />
+            )}
             Signin
           </Button>
         </div>
